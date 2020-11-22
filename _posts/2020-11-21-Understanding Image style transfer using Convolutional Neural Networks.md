@@ -29,7 +29,7 @@ First of all, what is style transfer between images? I will try to explain it wi
 <p align="center">
   <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/NS_fig1.png" />
 </p>
-->*Fig. 1: Style transfer: Target image looks like content image painted with style of style image*<-
+<p style="text-align: center;">*Fig. 1: Style transfer: Target image looks like content image painted with style of style image*</p>
 
 We have content image which is a stretch of buildings across a river. We also have a style image which is a painting. Main idea behind style transfer is to transfer the ‘style’ of style image to the content image so that the target images looks like buildings and river painted in style of artwork(style image). We can clearly see that content is preserved but looks like buildings and water are painted.
 
@@ -54,7 +54,7 @@ I will be using trained Convnet used in paper Zeiler and Fergus., 2013, Visualiz
 <p align="center">
   <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig2.png" />
 </p>
-<p style="text-align: center;">Fig. 2</p>
+<p style="text-align: center;">*Fig. 2*</p>
 
 Lets start with a hidden unit in layer 1 and find out the images that maximize that units activation. So we pass our training set through the above network and figure out what is the image that maximizes that units activation. Below are the image patches that activated randomly chosen 9 different hidden units of layer 1
  
