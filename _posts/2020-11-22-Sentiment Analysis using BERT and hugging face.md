@@ -17,12 +17,55 @@ Below we can see how finetuning is done
   <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Bert_sentiment/Bs_f1.png" />
 </p>
 
-Input traning sentence is passed through pretrained BERT model and on top of BERT we add one layer of Feed forward NN with softmax for our sentiment classification. Final hidden state corresponding to [CLS] token is used as the aggregate sequence representation for classification. According to paper, final hidden state is of 768 dimensions but for illustration I used 4 dimensions.
+Input traning sentence is passed through pretrained BERT model and on top of BERT we add one layer of Feed forward NN with softmax for our sentiment classification. Final hidden state corresponding to [CLS] token is used as the aggregate sequence representation for classification. According to paper, final hidden state is of 768 dimensions but for illustration I used 4 dimensions. Entire model end to end is fine tuned with objective of reducing loss for this first hidden state after softmax.
 
 For this project, I used smaller vesion of BERT called DistillBERT. Huggingface leveraged knowledge distillation during pretraning phase and reduced size of BERT by 40% while retaining 97% of its language understanding capabilities and being 60% faster. 
 
 I tested with both base BERT(BERT has two versions BERT base and BERT large) and DistillBERT and found that peformance dip is not that great when using DistillBERT but training time decreased by 50%.
 
+### Contents:
+
+1) Load and preprocess IMDB dataset
+
+2) Content of an Image
+
+3) Style of an Image
+
+4) Understanding output of CNN’s
+
+5) Cost function
+
+6) Gram matrix
 
 
+### 1) Load and preprocess IMDB dataset
+
+```python
+# Install huggingface transformers
+!pip install -qq transformers
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as pltimport numpy as np
+import random
+import nltk
+
+import re
+import string
+
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk.tokenize import TweetTokenizer
+
+import transformers
+from transformers import DistilBertForSequenceClassification, DistilBertTokenizer, AdamW, get_linear_schedule_with_warmup
+
+import torch
+from torch import nn, optim
+from torch.utils.data import Dataset, DataLoader
+
+from sklearn.model_selection import train_test_split
+from collections import defaultdict
+
+
+```
 
