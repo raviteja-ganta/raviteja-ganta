@@ -5,7 +5,7 @@ title: Understanding Image style transfer using Convolutional Neural Networks
 
 Main goal of this post is to explain Gatys et al (2016) work on Image style transfer using CNN’s in easier terms.
 
-Code for generating all images in this notebook can be found at https://github.com/raviteja-ganta/Neural-style-transfer-using-CNN
+Code for generating all images in this notebook can be found at [github](https://github.com/raviteja-ganta/Neural-style-transfer-using-CNN)
 
 ### Contents:
 
