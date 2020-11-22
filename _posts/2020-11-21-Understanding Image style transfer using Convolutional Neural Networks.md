@@ -25,6 +25,6 @@ Code for generating all images in this notebook can be found at https://github.c
 
 First of all, what is style transfer between images? I will try to explain it with the example below
 
-![NS](https://github.com/raviteja-ganta/raviteja-ganta.github.io/blob/master/images/jekyll-logo.png "Fig. 1: Style transfer: Target image looks like content image painted with style of style image")
+![NSSS](https://github.com/raviteja-ganta/raviteja-ganta.github.io/blob/master/images/jekyll-logo.png "Fig. 1: Style transfer: Target image looks like content image painted with style of style image")
 *Fig. 1: Style transfer: Target image looks like content image painted with style of style image*
 
