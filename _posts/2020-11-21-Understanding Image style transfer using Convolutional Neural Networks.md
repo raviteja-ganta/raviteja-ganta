@@ -25,7 +25,7 @@ Code for generating all images in this notebook can be found at [github](https:/
 
 First of all, what is style transfer between images? I will try to explain it with the example below
 
-![NSSS](https://github.com/raviteja-ganta/raviteja-ganta.github.io/blob/master/images/NS_fig1.png) 
+![N](https://github.com/raviteja-ganta/raviteja-ganta.github.io/blob/master/images/NS_fig1.png) 
 
 *Fig. 1: Style transfer: Target image looks like content image painted with style of style image*
 
