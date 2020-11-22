@@ -12,4 +12,4 @@ Graduate of Deep learning engineer, Natural language processing and Machine lear
 
 ### Contact me
 
-[email@domain.com](mailto:ravitejareddy.ganta@gmail.com)
+[ravitejareddy.ganta@gmail.com](mailto:ravitejareddy.ganta@gmail.com)
