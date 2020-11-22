@@ -50,12 +50,16 @@ I will be using trained Convnet used in paper Zeiler and Fergus., 2013, Visualiz
 *Fig. 1:*
 
 Lets start with a hidden unit in layer 1 and find out the images that maximize that units activation. So we pass our training set through the above network and figure out what is the image that maximizes that units activation. Below are the image patches that activated randomly chosen 9 different hidden units of layer 1
-
-![F-3a](https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig3.png) 
+ 
+<p align="center">
+  src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig3.png">
+</p>
 
 Fig. 3 (a) gives sense that hidden units in layer 1 are mainly looking for simple features like edges or shades of color. For example, first hidden unit(Row1/Col1) is getting activated for all 9 images whenever it see an slant edge. Same way Row2/Col1 hidden unit is getting activated when it sees orange shade in input image.<br/>
-
-![F-3b](https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig4.png) 
+ 
+<p align="center">
+  src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig4.png">
+</p>
 
 Zeiler and Fergus visualized same for deeper layers of Convnet with help of deconvolutional layers. For layer 2 looks like it detecting more complex shapes and patterns. For example R2/C2 hidden unit is getting activated when it sees some rounded type object and in R1/C2 hidden unit is getting activated when it see vertical texture with lots of vertical lines. So the features second layer is detecting are getting more complicated.
 
