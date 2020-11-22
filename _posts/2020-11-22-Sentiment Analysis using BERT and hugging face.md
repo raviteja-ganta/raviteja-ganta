@@ -62,10 +62,27 @@ from transformers import DistilBertForSequenceClassification, DistilBertTokenize
 import torch
 from torch import nn, optim
 from torch.utils.data import Dataset, DataLoader
+from ignite.metrics import Accuracy, Precision, Recall, Fbeta
 
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, classification_report
+
 from collections import defaultdict
 
+%matplotlib inline
 
+RANDOM_SEED = 42
+np.random.seed(RANDOM_SEED)
+torch.manual_seed(RANDOM_SEED)
+
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 ```
 
+```python
+path = "/content/drive/My Drive/IMDB Dataset/IMDB Dataset.csv"
+df = pd.read_csv(path)
+df.head()
+```
+<p align="left">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Bert_sentiment/Bs_f2.png" />
+</p>
