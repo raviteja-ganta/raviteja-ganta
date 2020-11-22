@@ -143,6 +143,8 @@ df['review_processed'] = df['review'].apply(process_review)
 df['sentiment'] = df['sentiment'].map({'positive':1,'negative':0}) 
 ```
 
+### 2) Understanding tokenization
+
 Now lets load our pretrained Distill tokenizer. This is learned during pre-training. It links each word to a number and is based on wordpiece tokenization.
 I am using **distilbert-base-uncased** as our model as this gave best validation accuracy on our data
 *We need to convert words to numbers as any deep learning model will need its input as numerical value*
@@ -169,9 +171,11 @@ print(f'Token IDs: {token_ids}')
 ```
 Below is output of above code snippet
 
+```python
 Sentence: One of the other reviewers has mentioned that after watching just Oz episode you'll be hooked 
 Tokens: ['one', 'of', 'the', 'other', 'reviewers', 'has', 'mentioned', 'that', 'after', 'watching', 'just', 'oz', 'episode', 'you', "'", 'll', 'be', 'hooked']
 Token IDs: [2028, 1997, 1996, 2060, 15814, 2038, 3855, 2008, 2044, 3666, 2074, 11472, 2792, 2017, 1005,2222, 2022, 13322]
+```
 
 Before applying our tokens, one thing we need to do. BERT has special requirement. It wants input to be in certain format.
 
