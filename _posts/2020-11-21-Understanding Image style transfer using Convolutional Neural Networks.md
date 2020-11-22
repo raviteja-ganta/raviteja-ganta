@@ -26,8 +26,10 @@ Code for generating all images in this notebook can be found at [github](https:/
 
 First of all, what is style transfer between images? I will try to explain it with the example below
 
-![F-1](https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/NS_fig1.png "Fig. 1: Style transfer: Target image looks like content image painted with style of style image") 
-*Fig. 1: Style transfer: Target image looks like content image painted with style of style image*
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/NS_fig1.png" />
+</p>
+<div align='center'>*Fig. 1: Style transfer: Target image looks like content image painted with style of style image*</div>
 
 We have content image which is a stretch of buildings across a river. We also have a style image which is a painting. Main idea behind style transfer is to transfer the ‘style’ of style image to the content image so that the target images looks like buildings and river painted in style of artwork(style image). We can clearly see that content is preserved but looks like buildings and water are painted.
 
@@ -46,34 +48,47 @@ But before that its important to understand what CNN’s are learning. It gives 
 ### 4) Understanding output of CNN’s:
 I will be using trained Convnet used in paper Zeiler and Fergus., 2013, Visualizing and understanding convolutional networks and visualize what hidden units in different layers are computing. Input to the below network is ImageNet data spread over 1000 categories.
 
-![F-2](https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig2.png) 
-*Fig. 1:*
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig2.png" />
+</p>
+<div align='center'>*Fig. 2*</div>
+
 
 Lets start with a hidden unit in layer 1 and find out the images that maximize that units activation. So we pass our training set through the above network and figure out what is the image that maximizes that units activation. Below are the image patches that activated randomly chosen 9 different hidden units of layer 1
  
-<img align = 'center' src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig3.png">
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig3.png" />
+</p>
 
 Fig. 3 (a) gives sense that hidden units in layer 1 are mainly looking for simple features like edges or shades of color. For example, first hidden unit(Row1/Col1) is getting activated for all 9 images whenever it see an slant edge. Same way Row2/Col1 hidden unit is getting activated when it sees orange shade in input image.<br/>
  
-<img align = 'center' src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig4.png">
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig4.png" />
+</p>
 
 Zeiler and Fergus visualized same for deeper layers of Convnet with help of deconvolutional layers. For layer 2 looks like it detecting more complex shapes and patterns. For example R2/C2 hidden unit is getting activated when it sees some rounded type object and in R1/C2 hidden unit is getting activated when it see vertical texture with lots of vertical lines. So the features second layer is detecting are getting more complicated.
 
-![F-3c](https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig5.png) 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig5.png" />
+</p>
 
 Zeiler and Fergus did same experiment for layer 5 and they found that its detecting more sophisticated things. For example hidden unit(R3/C3) is getting activated when its sees a dog and hidden unit(R3/C1) is maximally activated when it see flowers. So we have gone long way from detecting simple features like edges in layer 1 to detecting very complex objects in deeper layers.
 
 ### 5) Cost function:
 In order to do neural style transfer we define a cost function to see how good the generated image is. We can use gradient descent to lower this cost by updating the generated image until generated image is what we want. We have two cost functions 1) Content cost : Measures how similar content of generated image is to content of content image 2) Style cost: Measures how similar style of generated image is to style of style image
 
-![F-4](https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig6.png) 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig6.png" />
+</p>
 
 Goal for above cost function is to take a target image which usually we start as random noise or as a copy of content image and change it so that content is close to content image and style is close to style image
 
 #### Content cost function:
 As we saw from above research by Zeiler and Fergus, as we go deeper in to CNN, later layers are increasingly care about content of image rather than texture and color of pixels(Images shown above are not actual output of CNN layers so the reason they are colored). Authors used features from pretrained VGG19 network for extracting both content and style of an image. For content cost, both content and target image are passed through VGG19 pretrained network and output of Conv4_2 is taken as content representation of image.
 
-![F-5](https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig7.png) 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig7.png" />
+</p>
 
 Lets name P and F as content representations(output of Conv4_2 layer) of content and target image respectively. If these two are equal then we can say that contents of both content image and target image are matching. So content cost is how different are these representations(Cc and Tc). We just take element wise difference between hidden unit activations between Cc and Tc
 
