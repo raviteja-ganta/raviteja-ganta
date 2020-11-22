@@ -26,6 +26,27 @@ Code for generating all images in this notebook can be found at [github](https:/
 
 First of all, what is style transfer between images? I will try to explain it with the example below
 
-![F-1](https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/NS_fig1.png) 
+![F-1](https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/NS_fig1.png "Fig. 1: Style transfer: Target image looks like content image painted with style of style image") 
 *Fig. 1: Style transfer: Target image looks like content image painted with style of style image*
+
+We have content image which is a stretch of buildings across a river. We also have a style image which is a painting. Main idea behind style transfer is to transfer the ‘style’ of style image to the content image so that the target images looks like buildings and river painted in style of artwork(style image). We can clearly see that content is preserved but looks like buildings and water are painted.
+
+To do this we need to extract content from content image, style from style image and combine these two to get our target image. But before that, lets understand what exactly content and style of an image are.
+
+### 2) Content of an Image:
+Content can be thought as objects and arrangements in an image. In our current case, content is literally content in the image with out taking in to account texture and color of pixels. So in our above examples content is just houses, water and grass irrespective of colors.
+
+### 3) Style of an Image:
+We can think of style as texture, colors of pixels. At same time it doesn’t care about actual arrangement and identity of different objects in that image.
+
+Now that we have understanding of what content and style of image are, lets see how can we get them from the image.
+
+But before that its important to understand what CNN’s are learning. It gives us clear idea when we talk about extracting style from image.
+
+#### 4) Understanding output of CNN’s:
+I will be using trained Convnet used in paper Zeiler and Fergus., 2013, Visualizing and understanding convolutional networks and visualize what hidden units in different layers are computing. Input to the below network is ImageNet data spread over 1000 categories.
+
+![F-2](https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig2.png) 
+
+
 
