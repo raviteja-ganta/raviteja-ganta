@@ -29,7 +29,7 @@ First of all, what is style transfer between images? I will try to explain it wi
 <p align="center">
   <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/NS_fig1.png" />
 </p>
-<div align='center'>_Fig. 1: Style transfer: Target image looks like content image painted with style of style image_</div>
+->*Fig. 1: Style transfer: Target image looks like content image painted with style of style image*</div><-
 
 We have content image which is a stretch of buildings across a river. We also have a style image which is a painting. Main idea behind style transfer is to transfer the ‘style’ of style image to the content image so that the target images looks like buildings and river painted in style of artwork(style image). We can clearly see that content is preserved but looks like buildings and water are painted.
 
