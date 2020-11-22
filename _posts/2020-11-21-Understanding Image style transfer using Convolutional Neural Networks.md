@@ -54,8 +54,7 @@ I will be using trained Convnet used in paper Zeiler and Fergus., 2013, Visualiz
 <p align="center">
   <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Neural_style_transfer/NS_fig2.png" />
 </p>
-->*Fig. 2*<-
-
+<p style="text-align: center;">Fig. 2</p>
 
 Lets start with a hidden unit in layer 1 and find out the images that maximize that units activation. So we pass our training set through the above network and figure out what is the image that maximizes that units activation. Below are the image patches that activated randomly chosen 9 different hidden units of layer 1
  
