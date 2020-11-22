@@ -86,3 +86,59 @@ df.head()
 <p align="left">
   <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Bert_sentiment/Bs_f2.png" />
 </p>
+
+```python
+##### Do we have class imbalance? Lets see
+sns.countplot(df.sentiment)
+plt.xlabel('sentiment');
+```
+<p align="left">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Bert_sentiment/Bs_f3.png" />
+</p>
+
+We can see we dont have any imbalance which is perfect. We can safely use accuracy as our metric.
+
+```python
+# Create the function to preprocess every tweet
+def process_review(review):
+  """Process tweet function.
+  Input:
+      tweet: a string containing a tweet
+  Output:
+      tweets_clean: a list of words containing the processed tweet
+
+  """
+  # remove old style retweet text "RT"
+  review = re.sub(r'^RT[\s]+', '', review)
+  # remove hyperlinks
+  review = re.sub(r'https?:\/\/.*[\r\n]*', '', review)
+  review = re.sub(r'#', '', review)
+  # removing hyphens
+  review = re.sub('-', ' ', review)
+  # remove linebreaks
+  review = re.sub('<br\s?\/>|<br>', "", review)
+  # remving numbers
+  review = re.sub(r"(\b|\s+\-?|^\-?)(\d+|\d*\.\d+)\b",'',review)
+
+  # tokenize tweets
+  tokenizer = TweetTokenizer(preserve_case=True, strip_handles=True,
+                              reduce_len=True)
+  tweet_tokens = tokenizer.tokenize(review)
+
+  # remove numbers
+  tweet_tokens = [i for i in tweet_tokens if not i.isdigit()]
+
+  tweets_clean = []
+  for word in tweet_tokens:
+    tweets_clean.append(word)
+
+  return ' '.join(tweets_clean)
+```
+
+```python
+# Lets apply above function to every tweet in df
+df['review_processed'] = df['review'].apply(process_review)
+
+# Also lets encode 'sentiment' column. 1 for positive and 0 for negative sentiment
+df['sentiment'] = df['sentiment'].map({'positive':1,'negative':0}) 
+```
