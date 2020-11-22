@@ -142,3 +142,42 @@ df['review_processed'] = df['review'].apply(process_review)
 # Also lets encode 'sentiment' column. 1 for positive and 0 for negative sentiment
 df['sentiment'] = df['sentiment'].map({'positive':1,'negative':0}) 
 ```
+
+Now lets load our pretrained Distill tokenizer. This is learned during pre-training. It links each word to a number and is based on wordpiece tokenization.
+I am using **distilbert-base-uncased** as our model as this gave best validation accuracy on our data
+*We need to convert words to numbers as any deep learning model will need its input as numerical value*
+
+```python
+PRE_TRAINED_MODEL_NAME = 'distilbert-base-uncased'
+# Lets load pre-trained Distill BertTokenizer
+tokenizer = DistilBertTokenizer.from_pretrained(PRE_TRAINED_MODEL_NAME)
+```
+Now we loaded our tokenizer, why not apply on sample text to see what it is doing
+
+```python
+# Lets use below text to understand tokenization process
+# First I am processing our review using above defined function
+sample_text = process_review(df['review_processed'][0])
+
+# Lets apply our BertTokenizer on sample text
+tokens = tokenizer.tokenize(sample_text)    # this will convert sentence to list of words
+token_ids = tokenizer.convert_tokens_to_ids(tokens) # this will convert list of words to list of numbers based on tokenizer
+
+print(f'Sentence: {sample_text}')
+print(f'Tokens: {tokens}')
+print(f'Token IDs: {token_ids}')
+```
+Below is output of above code snippet
+
+Sentence: One of the other reviewers has mentioned that after watching just Oz episode you'll be hooked 
+Tokens: ['one', 'of', 'the', 'other', 'reviewers', 'has', 'mentioned', 'that', 'after', 'watching', 'just', 'oz', 'episode', 'you', "'", 'll', 'be', 'hooked']
+Token IDs: [2028, 1997, 1996, 2060, 15814, 2038, 3855, 2008, 2044, 3666, 2074, 11472, 2792, 2017, 1005,2222, 2022, 13322]
+
+Before applying our tokens, one thing we need to do. BERT has special requirement. It wants input to be in certain format.
+
+For BERT model we need to add Special tokens in to each tweet. Below are the Special tokens
+
+* [SEP] - Marker for ending of a sentence - BERT uses 102
+* [CLS] - We must add this token at start of each sentence, so BERT knows we're doing classification - BERT uses 101
+* [PAD] - Special token for padding - BERT uses number 0 for this.
+* [UNK] - BERT understands tokens that were in the training set. Everything else can be encoded using this unknown token
