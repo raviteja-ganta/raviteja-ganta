@@ -5,12 +5,11 @@ permalink: /about/
 published: true
 ---
 
-Some information about you!
+Hello I am Raviteja, currently working as Data Scientist at Walmart. I love building Machine learning and deep learning solutions. Aspring deep learning researcher.
 
-### More Information
+Graduate of Deep learning engineer, Natural language processing and Machine learning engineer nanodegree from Udacity
 
-A place to include any other types of information that you'd like to include about yourself.
 
 ### Contact me
 
-[email@domain.com](mailto:email@domain.com)
+[email@domain.com](mailto:ravitejareddy.ganta@gmail.com)
