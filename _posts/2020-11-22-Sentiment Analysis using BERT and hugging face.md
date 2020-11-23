@@ -525,3 +525,11 @@ test_acc.item()
 ```
 
 Our model gave accuracy of **93.06%** on test data.
+
+
+### References:
+
+* Hugging Face official website
+* BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
+* DistilBERT, a distilled version of BERT: smaller, faster, cheaper and lighter
+* Sentiment Analysis with BERT and Transformers by Hugging Face using PyTorch and Python by Curiousily
