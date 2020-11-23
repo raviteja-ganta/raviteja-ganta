@@ -31,11 +31,11 @@ I tested with both base BERT(BERT has two versions BERT base and BERT large) and
 
 3) Create PyTorch dataset and split data in to train, validation and test
 
-4) Understanding output of CNN’s
+4) Create Data generators
 
-5) Cost function
+5) Sentiment classification with Distill BERT and Hugging face
 
-6) Gram matrix
+6) Training
 
 
 ### 1) Load and preprocess IMDB dataset
@@ -229,7 +229,7 @@ Running above gives
 tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1]])
 ```
 
-I figured out that maximum length of reviews in data is 512 and % of reviews have max length of > 500. So not to loose any information by padding let's use 512 as maximum length. Any smaller review will get padded with 0's until maximum length is reached.
+I figured out that maximum length of reviews in data is 512 and 13% of reviews have max length of > 500. So not to loose any information by padding let's use 512 as maximum length. Any smaller review will get padded with 0's until maximum length is reached.
 
 ### 3) Create PyTorch dataset and split data in to train, validation and test
 
@@ -246,6 +246,7 @@ class IMDBDataset(Dataset):
   def __len__(self):
     return len(self.reviews)
 
+  # __getitem__ helps us to get a review out of all reviews
   def __getitem__(self, item):
     review = str(self.reviews[item])
     target = self.targets[item]
@@ -263,8 +264,264 @@ class IMDBDataset(Dataset):
 
     return {
       'review_text': review,
-      'input_ids': encoding['input_ids'].flatten(),
+      'input_ids': encoding['input_ids'].flatten(),         # flatten() flattens a continguous range of dims in a tensor
       'attention_mask': encoding['attention_mask'].flatten(),
       'targets': torch.tensor(target, dtype=torch.long)
     }
 ```
+
+#### Lets split data in to train, validation and test data
+
+```python
+# Lets have 70% for training, 15% for validation and 15% for testing
+
+X_train, X_valid, y_train, y_valid = train_test_split(df[['review_processed','review']], df['sentiment'],
+                                                    stratify=df['sentiment'], 
+                                                    test_size=0.30, random_state = 0)
+df_train = pd.concat([pd.DataFrame({'review': X_train['review_processed'].values,'review_old':X_train['review'].values}),pd.DataFrame({'sentiment': y_train.values})], axis = 1)
+df_valid = pd.concat([pd.DataFrame({'review': X_valid['review_processed'].values,'review_old':X_valid['review'].values}),pd.DataFrame({'sentiment': y_valid.values})], axis = 1)
+
+
+X_valid, X_test, y_valid, y_test = train_test_split(df_valid[['review','review_old']], df_valid['sentiment'],
+                                                    stratify= df_valid['sentiment'], 
+                                                    test_size=0.5, random_state = 0)
+
+df_valid = pd.concat([pd.DataFrame({'review': X_valid['review'].values,'review_old':X_valid['review_old'].values}),pd.DataFrame({'sentiment': y_valid.values})], axis = 1)
+df_test = pd.concat([pd.DataFrame({'review': X_test['review'].values,'review_old':X_test['review_old'].values}),pd.DataFrame({'sentiment': y_test.values})], axis = 1)
+
+print(df_train.shape, df_valid.shape, df_test.shape)
+```
+```python
+(35000, 3) (7500, 3) (7500, 3)
+```
+
+### 4) Create Data generators
+We always want our data to go in batches to our model. So lets create dataloaders for our train and validation data
+
+```python
+def create_data_loader(df, tokenizer, max_len, batch_size):
+  ## pass in entire data set here
+  ds = IMDBDataset(
+    reviews=df.review.to_numpy(),
+    targets=df.sentiment.to_numpy(),
+    tokenizer=tokenizer,
+    max_len=max_len
+  )
+  # this returns dataloaders with what ever batch size we want
+  return DataLoader(
+    ds,
+    batch_size=batch_size,
+    num_workers=4                 
+    # tells data loader how many sub-processes to use for data loading. No hard and fast rule. Have to experiment on how many num_workers giving better speed up
+  )
+
+
+batch_size = 16      # Bert recommendation
+
+train_data_loader = create_data_loader(df_train, tokenizer, max_len, batch_size)
+valid_data_loader = create_data_loader(df_valid, tokenizer, max_len, batch_size)
+test_data_loader = create_data_loader(df_test, tokenizer, max_len, batch_size)
+```
+
+Now lets have a look at a single batch from our training data
+
+```python``
+data = next(iter(train_data_loader))
+
+print(data['input_ids'].shape)
+print(data['attention_mask'].shape)
+print(data['input_ids'].shape)
+```
+
+```python
+torch.Size([16, 512])
+torch.Size([16, 512])
+torch.Size([16, 512])
+```
+
+Above output is intutitive. We said we want batch to have 16 data points each of with max_length = 512
+
+### 5) Sentiment classification with Distill BERT and Hugging face
+
+Hugging face has nice wrappers for various downstream tasks. We can use these wrappers to load prebuilt models. For our case we will be using DistilBertForSequenceClassification. This is just DistillBert model with a sequence classification head on top(i.e, Feedforward + softmax layer on top)
+
+We can load pretrained model as below
+
+```python
+# Lets build classifier for our reviews now. Below n_classes would be 2 in our case since we are classifying review as either positive or negative.
+a
+model = DistilBertForSequenceClassification.from_pretrained(PRE_TRAINED_MODEL_NAME, num_labels = 2)
+model = model.to(device)
+```
+
+### 6) Training
+
+BERT paper gave some recommendations on hyperparameters for fine tuning
+
+* Batch size: 16, 32
+
+* Adam learning rate: 5e-5, 3e-5, 2e-5
+
+* Number of epochs: 2,3,4
+
+Below we initialize optimizer and scheduler
+
+```python
+EPOCHS = 5
+
+optimizer = AdamW(model.parameters(), lr = 5e-5)
+total_steps = len(train_data_loader) * EPOCHS
+
+scheduler = get_linear_schedule_with_warmup(
+  optimizer,
+  num_warmup_steps=0,
+  num_training_steps=total_steps
+)
+```
+
+[get_linear_schedule_with_warmup](https://huggingface.co/transformers/main_classes/optimizer_schedules.html) - learning rate that decreases linearly from initial lr set in the optimizer to 0. This is important because in initial stages of learning we want higher learning rate but over the time we want learning rate to decrease so we can reach optimum better
+
+
+##### Now its time for training
+
+Lets define a function to train our model on one epoch
+
+```python
+# Lets write a function to train our model on one epoch
+
+def train_epoch(model, data_loader, optimizer, device, scheduler, n_examples):
+
+  model = model.train()    # tells your model that we are training
+  losses = []
+  correct_predictions = 0
+
+  for d in data_loader:
+    input_ids = d["input_ids"].to(device)
+    attention_mask = d["attention_mask"].to(device)
+    targets = d["targets"].to(device)
+
+    loss, logits = model(
+      input_ids=input_ids,
+      attention_mask=attention_mask,
+      labels = targets
+    )
+    
+    #logits = classification scores befroe softmax
+    #loss = classification loss
+    
+    logits = logits.detach().cpu().numpy()
+    label_ids = targets.to('cpu').numpy()
+
+    preds = np.argmax(logits, axis=1).flatten()   #returns indices of maximum logit
+    targ = label_ids.flatten()
+
+    correct_predictions += np.sum(preds == targ)
+
+    losses.append(loss.item())
+    loss.backward()   # performs backpropagation(computes derivates of loss w.r.t to parameters)
+    nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)  #clipping gradients so they dont explode
+    optimizer.step()       #After gradients are computed by loss.backward() this makes the optimizer iterate over all parameters it is supposed to update and use internally #stored grad to update their values
+    scheduler.step()    # this will make sure learning rate changes. If we dont provide this learning rate stays at initial value
+    optimizer.zero_grad()     # clears old gradients from last step
+
+  return correct_predictions / n_examples, np.mean(losses)
+```
+
+Now lets define a function to validate our model on one epoch
+
+```python
+# Lets write a function to validate our model on one epoch
+
+def eval_model(model, data_loader, device, n_examples):
+  
+  model = model.eval()   # tells model we are in validation mode
+  losses = []
+  correct_predictions = 0
+
+  with torch.no_grad():
+    for d in data_loader:
+      input_ids = d["input_ids"].to(device)
+      attention_mask = d["attention_mask"].to(device)
+      targets = d["targets"].to(device)
+      loss, logits = model(
+        input_ids=input_ids,
+        attention_mask=attention_mask,
+        labels = targets
+      )
+
+
+      logits = logits.detach().cpu().numpy()
+      label_ids = targets.to('cpu').numpy()
+
+      preds = np.argmax(logits, axis=1).flatten()
+      targ = label_ids.flatten()
+
+      correct_predictions += np.sum(preds == targ)
+      losses.append(loss.item())
+
+  return correct_predictions / n_examples, np.mean(losses)
+```
+
+##### Now comes real phase - lets train
+
+```python
+%%time
+# standard block
+# used accuracy as metric here
+history = defaultdict(list)
+
+best_acc = 0
+
+for epoch in range(EPOCHS):
+
+  print(f'Epoch {epoch + 1}/{EPOCHS}')
+  print('-' * 10)
+
+  train_acc, train_loss = train_epoch(model, train_data_loader, optimizer, device, scheduler, len(df_train))
+
+  print(f'Train loss {train_loss} Accuracy {train_acc}')
+
+  val_acc, val_loss = eval_model(model, valid_data_loader, device, len(df_valid))
+
+  print(f'Val   loss {val_loss} Accuracy {val_acc}')
+  print()
+
+  history['train_acc'].append(train_acc)
+  history['train_loss'].append(train_loss)
+  history['val_acc'].append(val_acc)
+  history['val_loss'].append(val_loss)
+
+  if val_acc > best_acc:
+    torch.save(model.state_dict(), 'best_model_state_a5.bin')
+    best_acc = val_acc
+
+# We are storing state of best model indicated by highest validation accuracy
+```
+
+<p align="left">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Bert_sentiment/Bs_f4.png" />
+</p>
+
+Now the model is trained and model coefficients are saved, lets load the model coefficients which gave highes validation accuracy
+
+```python
+# lets load trained model
+
+path1 = "/content/drive/My Drive/IMDB Dataset/best_model_state_a4.bin"
+
+PRE_TRAINED_MODEL_NAME = 'distilbert-base-uncased'
+
+model = DistilBertForSequenceClassification.from_pretrained(PRE_TRAINED_MODEL_NAME, num_labels = 2)
+model.load_state_dict(torch.load(path1))
+
+model = model.to(device)    # moving model to device. Device here can be GPU or CPU depending on availability
+```
+
+Now lets test our model on test data. This is important because our model did not see this data when training or when tuning hyperparameters. So peformance on this dataset in our final accuracy
+
+```python
+test_acc, _ = eval_model(model, test_data_loader, device,len(df_test))
+test_acc.item()
+```
+
+Our model gave accuracy of **93.06%** on test data.
