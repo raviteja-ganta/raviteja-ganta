@@ -27,9 +27,9 @@ I tested with both base BERT(BERT has two versions BERT base and BERT large) and
 
 1) Load and preprocess IMDB dataset
 
-2) Content of an Image
+2) Understanding tokenization
 
-3) Style of an Image
+3) Create PyTorch dataset and split data in to train, validation and test
 
 4) Understanding output of CNN’s
 
@@ -179,9 +179,92 @@ Token IDs: [2028, 1997, 1996, 2060, 15814, 2038, 3855, 2008, 2044, 3666, 2074, 1
 
 Before applying our tokens, one thing we need to do. BERT has special requirement. It wants input to be in certain format.
 
-For BERT model we need to add Special tokens in to each tweet. Below are the Special tokens
+For BERT model we need to add Special tokens in to each review. Below are the Special tokens
 
 * [SEP] - Marker for ending of a sentence - BERT uses 102
 * [CLS] - We must add this token at start of each sentence, so BERT knows we're doing classification - BERT uses 101
 * [PAD] - Special token for padding - BERT uses number 0 for this.
 * [UNK] - BERT understands tokens that were in the training set. Everything else can be encoded using this unknown token
+
+We can achieve all of this work using hugging face's tokenizer.encode_plus
+
+```python
+encoding = tokenizer.encode_plus(
+  sample_text,
+  max_length=32,  # Here for experiment I gave 32 as max_length
+  truncation = True,  # Truncate to a maximum length specified with argument max_length
+  add_special_tokens=True, # Add '[CLS]', [PAD] and '[SEP]'
+  return_token_type_ids=False,  # since our use case deals with only one sentence as opposed to use case which use 2 sentences in single training example(for ex: Question-anwering) we can have it as false
+  padding='max_length',   # pad to longest sequence as defined by max_length
+  return_attention_mask=True,  # Returns attention mask. Attention mask indicated to the model which tokens should be attended to, and which should not.
+  return_tensors='pt',  # Return PyTorch tensors
+)
+
+print(len(encoding['input_ids'][0]))
+encoding['input_ids'][0]
+```
+Below is output of above code
+
+```python
+32
+tensor([  101,  2028,  1997,  1996,  2060, 15814,  2038,  3855,  2008,  2044,
+         3666,  2074, 11472,  2792,  2017,  1005,  2222,  2022, 13322,  1012,
+         2027,  2024,  2157,  1010,  2004,  2023,  2003,  3599,  2054,  3047,
+         2007,   102])
+```
+
+We can see that token 101[CLS] and 102[SEP] tokens got added after tokenization step
+
+[Attention mask](https://huggingface.co/transformers/glossary.html#attention-mask) indicated to the model which tokens should be attended to, and which should not.
+
+```python
+# Attention mask also has same length. Zero's in output if any says those corresponds to padding
+print(len(encoding['attention_mask'][0]))
+encoding['attention_mask']
+```
+Running above gives
+
+```python
+32
+tensor([[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1, 1, 1, 1, 1, 1, 1, 1]])
+```
+
+I figured out that maximum length of reviews in data is 512 and % of reviews have max length of > 500. So not to loose any information by padding let's use 512 as maximum length. Any smaller review will get padded with 0's until maximum length is reached.
+
+### 3) Create PyTorch dataset and split data in to train, validation and test
+
+```python
+max_len = 512
+
+class IMDBDataset(Dataset):
+  def __init__(self, reviews, targets, tokenizer, max_len):
+    self.reviews = reviews
+    self.targets = targets
+    self.tokenizer = tokenizer
+    self.max_len = max_len
+
+  def __len__(self):
+    return len(self.reviews)
+
+  def __getitem__(self, item):
+    review = str(self.reviews[item])
+    target = self.targets[item]
+
+    encoding = self.tokenizer.encode_plus(
+      review,
+      add_special_tokens=True,
+      max_length=self.max_len,
+      truncation = True,
+      return_token_type_ids=False,
+      padding='max_length',
+      return_attention_mask=True,
+      return_tensors='pt',
+    )
+
+    return {
+      'review_text': review,
+      'input_ids': encoding['input_ids'].flatten(),
+      'attention_mask': encoding['attention_mask'].flatten(),
+      'targets': torch.tensor(target, dtype=torch.long)
+    }
+```
