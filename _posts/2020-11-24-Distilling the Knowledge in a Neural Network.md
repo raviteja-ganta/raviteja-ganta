@@ -36,7 +36,14 @@ Geoffrey Hinton, Oriol Vinyals and Jeff Dean from google through their [paper](h
 
 
 
-Usually in Machine learning, model that learns to discriminate between large number of classes, the main training objective is to maximize average log probability of correct answer. For example, take example of MNIST dataset where goal is to classify an image as whether its 1 or 2 or ... 9. So if actual image is 2 then objective of any model is to maximize **P(its 2/image)** (which can be read as probability that particular image is 2 given the image). But model also gives probabilities to all incorrect answers even though those probabilities are very small.
+
+If we can train this smaller model to *generalize* in same way as large model, then this smaller model trained this way will do much better than smaller model trained on same data but in normal way. This is one of the **main** principle behind Distillation
+
+
+
+## Dark Knowledge:
+
+Usually in Machine learning, model that learns to discriminate between large number of classes, the main training objective is to maximize average log probability of correct answer. For example, take example of MNIST dataset where goal is to classify an image as whether its 1 or 2 or ... 9. So if actual image is 2 then objective of any model is to maximize **P(its 2/image)** (which can be read as probability that particular image is 2 given the image). But model also gives probabilities to all incorrect answers even though those probabilities are very small, some of them are much larger than others. Point is that even though these probabilities are small, relative probabilities of incorrect answers tell us lot about how the model can generalize. To understand it, lets have a look at below example
 
 
 
@@ -47,4 +54,11 @@ Usually in Machine learning, model that learns to discriminate between large num
 
 
 
+In above figure, this version of 2 was given a probability of 10<sup>-6</sup> of being a 3 and 10<sup>-9/sup> of being a 7 whereas for another version it may be the other way around. This is valuable information that defines a rich similarity structure over the data(i. e. it says which 2’s look like 3’s and which look like 7’s) but it has very little influence on thecross-entropy cost function during the transfer stage because the probabilities are so close to zero.
 
+
+
+## Distillation procedure:
+
+Paper 
+ 
