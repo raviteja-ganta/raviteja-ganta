@@ -86,5 +86,49 @@ According to paper, best way to transfer this generalizaton capabilities of larg
 
 
 
-So the process is as follows. Take original training set which was used to train bigger model then pass that training data through bigger model and get softmax probabilities over different classes
- 
+So the process is as follows:
+
+* Take original training set which was used to train bigger model then pass that training data through bigger model and get softmax probabilities over different classes. As seen above true label will get high probability and incorrect labels will get low probabilities. But we saw these low probabilities have lot of information hiding in them. So to magnigy importance of these probabilities authors of papers used a variable called Temperature(T) to divide all logits before passing through softmax. This produces a softer probability distribution over classes. We can see below
+
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Distill_knowledge/dk_8.png" />
+</p>
+
+
+
+Output of applying softmax with temperature(T) is what we call Soft targets. This process is what authors called **distillation**. Anology with removing impurities in water by increasing temperature
+
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Distill_knowledge/B2.png" />
+</p>
+
+
+
+
+* Much of information about learned function from large model resides in the ratios of very small probabilities in the soft targets.
+
+
+* Some terminology:
+
+
+1) Soft targets - output from large model after temperature T has been applied during softmax
+
+2) Soft predictions - output from smaller model after temperature T has been applied during softmax
+
+3) Hard predictions - output from smaller model when temperature T = 1(regular softmax)
+
+4) True targets - actual targets from training set
+
+
+
+Below is flowchart of entire training process
+
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Distill_knowledge/dk_9.png" />
+</p>
