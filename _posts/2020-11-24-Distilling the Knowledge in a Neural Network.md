@@ -31,7 +31,7 @@ Geoffrey Hinton, Oriol Vinyals and Jeff Dean from google through their [paper](h
 
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Distill_knowledge/dk_3.png" />
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Distill_knowledge/dk_3a.png" />
 </p>
 
 
@@ -54,11 +54,37 @@ Usually in Machine learning, model that learns to discriminate between large num
 
 
 
-In above figure, this version of 2 was given a probability of 10<sup>-6</sup> of being a 3 and 10<sup>-9/sup> of being a 7 whereas for another version it may be the other way around. This is valuable information that defines a rich similarity structure over the data(i. e. it says which 2’s look like 3’s and which look like 7’s) but it has very little influence on thecross-entropy cost function during the transfer stage because the probabilities are so close to zero.
+In above figure, this version of 2 was given a probability of 10<sup>-6</sup> of being a 3 and 10<sup>-9</sup> of being a 7 whereas for another version it may be the other way around. This is valuable information that defines a rich similarity structure over the data(i. e. it says which 2’s look like 3’s and which look like 7’s) but it has very little influence on thecross-entropy cost function during the transfer stage because the probabilities are so close to zero.
+
+
+But before we move on to distillation procedure, lets spend time on how model actually produced output probabilities. This is where softmax activation comes in. Last step of model processing is softmax and this component is what gives output probabilities. Input to softmax is called logits and we design final layer of NN in such away that number of hidden units = number of classes we want to classify.
+
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Distill_knowledge/dk_5.png" />
+</p>
+
+
+Formula for calculating softmax is given as
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Distill_knowledge/dk_7.png" />
+</p>
+
+
+Above equation gives probabilites for each *i* and sum of all probabilities over all *i* equals 1. During training time, loss for any single training example is calculated by comparing these softmax probabilites with hard targets(labels) and using backpropagation coefficients are updated until loss is minimum
+
+
+As seen above this softmax gives high probability to true label and low probabilities to incorrect labels. We also see that probabilities of incorrect answers even though small, they have lot of information hidden in them which helps model to generalize. We call this **Dark Knowledge** 
 
 
 
 ## Distillation procedure:
 
-Paper 
+According to paper, best way to transfer this generalizaton capabilities of larger model to small model is to use class probabilities produced by the cumbersome model as **soft targets** for training the small model.
+
+
+
+So the process is as follows. Take original training set which was used to train bigger model then pass that training data through bigger model and get softmax probabilities over different classes
  
