@@ -98,6 +98,8 @@ So the process is as follows:
 
 
 
+
+
 Output of applying softmax with temperature(T) is what we call Soft targets. This process is what authors called **distillation**. Anology with removing impurities in water by increasing temperature
 
 
