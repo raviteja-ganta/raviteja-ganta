@@ -104,26 +104,18 @@ Output of applying softmax with temperature(T) is what we call Soft targets. Thi
 
 
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Distill_knowledge/B2.png" />
-</p>
-
-
-
-
 * Much of information about learned function from large model resides in the ratios of very small probabilities in the soft targets.
 
 
 * Some terminology:
 
+  **Soft targets** - output from large model after temperature T has been applied during softmax
 
-1) Soft targets - output from large model after temperature T has been applied during softmax
+  **Soft predictions** - output from smaller model after temperature T has been applied during softmax
 
-2) Soft predictions - output from smaller model after temperature T has been applied during softmax
+  **Hard predictions** - output from smaller model when temperature T = 1(regular softmax)
 
-3) Hard predictions - output from smaller model when temperature T = 1(regular softmax)
-
-4) True targets - actual targets from training set
+  **True targets** - actual targets from training set
 
 
 
@@ -134,3 +126,14 @@ Below is flowchart of entire training process
 <p align="center">
   <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/master/images/Distill_knowledge/dk_9.png" />
 </p>
+
+
+
+So training process for small model has 2 loss functions. First loss function takes both soft predictions and soft targets and is the cross entropy loss function. This is the way generalization ability is transferred from large model to small model by tryinig to match soft targets. For this loss function, both softmax uses temperature of 'T'
+
+
+
+Authors also found that using small model to match true targets helps. This is incorporated in second cost function. Final cost is weighted average of these two cost functions with hyperparameters alpha and beta.
+
+
+
