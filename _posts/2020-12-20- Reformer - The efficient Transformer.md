@@ -7,11 +7,14 @@ featured_image: assets/images/Transformers/tf_2.jpg
 ---
 
 
+*Knowledge about transformer architecture is necessary to understand this article. For those who are new to transformer architecture have a look at [Transformers](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers).
+
+
 ### Transformer Complexity:
 
 Recent trend in Natural Language Processing is to use Transformer Architecture for wide range of NLP tasks including but just not limited to Machine translation, Question-Answering, Named entity recognition, Text Summarization. It takes advantage of parallelization and relies on attention mechanism to draw global dependencies between input and output. It was shown to successfully outperform LSTM's and GRU's on wide range of tasks.
 
-In my recent blog [post](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers) I tried explaining Transformer architecture for machine translation. For more 
+In my recent blog [Transformers](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers) I tried explaining Transformer architecture for machine translation. For more 
 detail on the complete transformer operation, have a look at it.
 
 Transformer models are also used on increasingly long sequences. Up to 11 thousand tokens of text in a single example were processed in (Liu et al., 2018) but problem is transformers peformed well on short sequences but it will easily runs out of memory when run on long sequences. Lets understand why
@@ -41,13 +44,40 @@ Lets understand each component in detail.
 
 ### Locality sensitive hashing attention(LSH attention):
 
-Before we start LSH attention, lets discuss briefly how standard attention works in transformers. For detailed information have a look at my [post](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers) on transformers.
+Before we start LSH attention, lets discuss briefly how standard attention works in transformers. For detailed information have a look at my [Transformers](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers) on transformers.
 
-We have query and key of dimension d
+We have query, key and value vectors generated from input embedding vectors. We match each query with every key to find the similarity that query is a match for query i.e, every position needs to look at every other position. So if sequence is of length L then we need to compute L<sup>2</sup> comparisions using dot product. These are called attention scores. Softmax is then applied on the result to obtain the weights on the values. Now value vector is mulitiplied to get new representation of input.
+
+Entire calculation can be seen as 
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Reformers/rf_1.png" />
+</p>
+
+The self attention dot product grows as the size of the input squared. For example, if one wished to have an input size of 1024, that would result in 1024<sup>2</sup> or over a million dot products for each head. This is one of the bottle neck in current transformer architecture for long sequences. Reformer solves this problem by approach called **Locality Sensitive Hashing(LSH)attention**.
+
+Transformer uses 3 different linear layers(with different parameters) on input to generate Q, K, V. But for LSH attention, queries and keys(Q and K) are identical. Authors called the model that behaves like this as shared-QK Transformer.
+
+#### Intution behind LSH attention
+
+For any q<sub>i</sub> ∈ Q = [q<sub>1</sub>,q<sub>2</sub>,....,q<sub>n</sub>], do we really need to compute comparision or dot product with each and every k<sub>i</sub> ∈ K = [k<sub>1</sub>,k<sub>2</sub>,....,k<sub>n</sub>]. If we want to approximate standard attention on long sequences the answer is **NO**. Lets understand intuition behind LSH with simple example below. Image is from source['https://ai.googleblog.com/2017/08/transformer-novel-neural-network.html']
 
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Reformers/rf_2.png" />
+</p>
 
 
+Above is snapshot of attention weights when transformer is trying to re-represent word *it*. In left figure above, word *animal* is receiving higher score followed by word *street*. This is perfect as sentence ends with *tired* and what is *tired* refers to *animal*. In right figure above, sentence ends with word *wide* and on the same lines transformer also gave high score to word *street* and then followed by word *animal*. Until now this is just standard attention going on. But if we see above two pictures, only few words are receiving scores in both cases and words like *didn't*, *cross*, *the*, *because*, *was*, *too* have scores close to 0. Idea is that we apply softmax after the dot product and softmax is dominated by the largest elements. For each query q<sub>i</sub> (in above example this is word *it*), we only need to focus on the keys in K that are closest to q<sub>i</sub> (in above example these are words *animal*, *street*)
+
+Understanding above example with dummy values
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Reformers/rf_3.png" />
+</p>
+
+
+So for any query q<sub>i</sub> ∈ Q = [q<sub>1</sub>,q<sub>2</sub>,....,q<sub>n</sub>] we need to find all the keys k<sub>i</sub> ∈ K = [k<sub>1</sub>,k<sub>2</sub>,....,k<sub>n</sub>] that have bigger dot product i.e., nearest neighbours among keys. But how can we find these? Answer is **Locality sensitive hashing**  
 
 
 
