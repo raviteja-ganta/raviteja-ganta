@@ -46,7 +46,7 @@ Lets understand each component in detail.
 
 Before we start LSH attention, lets discuss briefly how standard attention works in transformers. For detailed information have a look at my [Transformers](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers) on transformers.
 
-We have query, key and value vectors generated from input embedding vectors. We match each query with every key to find the similarity that query is a match for query i.e, every position needs to look at every other position. So if sequence is of length L then we need to compute L<sup>2</sup> comparisions using dot product. These are called attention scores. Softmax is then applied on the result to obtain the weights on the values. Now value vector is mulitiplied to get new representation of input.
+We have query, key and value vectors generated from input embedding vectors. We match each query with every key to find the similarity that query is a match for key i.e, every position needs to look at every other position. So if sequence is of length L then we need to compute L<sup>2</sup> comparisions using dot product. These are called attention scores. Softmax is then applied on the result to obtain the weights on the values. Now value vector is mulitiplied to get new representation of input.
 
 Entire calculation can be seen as 
 
@@ -60,7 +60,7 @@ Transformer uses 3 different linear layers(with different parameters) on input t
 
 #### Intution behind LSH attention
 
-For any q<sub>i</sub> ∈ Q = [q<sub>1</sub>,q<sub>2</sub>,....,q<sub>n</sub>], do we really need to compute comparision or dot product with each and every k<sub>i</sub> ∈ K = [k<sub>1</sub>,k<sub>2</sub>,....,k<sub>n</sub>]. If we want to approximate standard attention on long sequences the answer is **NO**. Lets understand intuition behind LSH with simple example below. Image is from source['https://ai.googleblog.com/2017/08/transformer-novel-neural-network.html']
+For any q<sub>i</sub> ∈ Q = [q<sub>1</sub>,q<sub>2</sub>,....,q<sub>n</sub>], do we really need to compute comparision or dot product with each and every k<sub>i</sub> ∈ K = [k<sub>1</sub>,k<sub>2</sub>,....,k<sub>n</sub>]. If we want to approximate standard attention on long sequences the answer is **NO**. Lets understand intuition behind LSH with simple example below. Image is from [source]('https://ai.googleblog.com/2017/08/transformer-novel-neural-network.html')
 
 
 <p align="center">
@@ -79,5 +79,7 @@ Understanding above example with dummy values
 
 So for any query q<sub>i</sub> ∈ Q = [q<sub>1</sub>,q<sub>2</sub>,....,q<sub>n</sub>] we need to find all the keys k<sub>i</sub> ∈ K = [k<sub>1</sub>,k<sub>2</sub>,....,k<sub>n</sub>] that have bigger dot product i.e., nearest neighbours among keys. But how can we find these? Answer is **Locality sensitive hashing**  
 
+
+But as mentioned above in LSH attention Q and K are identical. So it would suffice if we can find query vectors that are closest to each query vector q<sub>i</sub>. What [Locality sensitive hashing](https://arxiv.org/pdf/1509.02897.pdff) does is it clusters query vectors in to buckets, such that all query vectors that belong to the same bucket have high similarity(so higher dot product and higher softmax output). And LSH attention approximates attention by taking dot product between qeuries which are in same bucket. This greatly reduces computation as now for a given query vector q<sub>i</sub> we just compute dot product with subset of all other query vectors in [q<sub>1</sub>,q<sub>2</sub>,....,q<sub>n</sub>].
 
 
