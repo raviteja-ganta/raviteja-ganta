@@ -19,8 +19,7 @@ detail on the complete transformer operation, have a look at it.
 
 Transformer models are also used on increasingly long sequences. Up to 11 thousand tokens of text in a single example were processed in (Liu et al., 2018) but problem is transformers peformed well on short sequences but it will easily runs out of memory when run on long sequences. Lets understand why
 
-* Attention on sequence of length L takes L<sup>2 time and memory. For example, if we are doing self attention of two sentences of length L then we need to compare each word in
-first sentence with each word in second sentence which is L X L comparision = L<sup>2. This is just for one layer of transformer.
+* Attention on sequence of length L takes L<sup>2</sup> time and memory. For example, if we are doing self attention of two sentences of length L then we need to compare each word in first sentence with each word in second sentence which is L X L comparision = L<sup>2</sup>. This is just for one layer of transformer.
   
 * We also need to store activations from each layer of forward so that they can be used during backpropagation
 
