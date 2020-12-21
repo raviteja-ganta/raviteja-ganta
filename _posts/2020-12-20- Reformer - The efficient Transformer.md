@@ -91,3 +91,12 @@ Lets understand this with simple example.
 </p>
 
 
+In above figure n_q = 4. Above logic works fine but there is one inefficiency in the way we calculate LSH attention which is attention function operates on different sizes of matrices above, which is suboptimal for efficient batching in GPU or TPU. To remedy this authors of paper used batching approach where chunks of m consecutive queries attend to each other. But this might split a single bucket in to more than one chunk. So to take care of this, chunk of m consecutive queries will also attend one chunk back as shown below. This way, we can be assured that all vectors in a bucket attend to each other with a high probability.
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Reformers/rf_5.png" />
+</p>
+
+
+
