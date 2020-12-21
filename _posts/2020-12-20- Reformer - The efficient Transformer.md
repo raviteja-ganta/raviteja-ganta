@@ -102,6 +102,12 @@ In above figure n_q = 4. Above logic works fine but there is one inefficiency in
 With hashing, there is always a small probability that similar items may fall in different buckets. This probability can be reduced by doing multiple rounds of
 hashing with nrounds = n<sub>h</sub> in parallel. For each output position(word) *i*, multiple vectors(z<sub>i</sub><sup>1</sup>,z<sub>i</sub><sup>2</sup>,z<sub>i</sub><sup>3</sup>,...z<sub>i</sub><sup>n<sub>h</sub></sup>) are computed and finally combined in to one.
 
+We have to keep in mind that all above calculations is just for one head of attention. Similar calculations will be performed in parallel for n_heads as in multi-headed attention of transformers and combined. For detailed explanation of multi-headed attention have a look at my [blog](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers) on transformers.
 
+As a side note, in standard transformer a query(q<sub>i</sub>) is allowed to attend to itself. But in reformer this is not allowed as the dot product of query q<sub>i</sub> with itself will almost always be greater than the dot product of a query vector with a vector at another position.
+
+
+
+### Reversible residual networks
 
 
