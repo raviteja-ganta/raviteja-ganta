@@ -99,4 +99,9 @@ In above figure n_q = 4. Above logic works fine but there is one inefficiency in
 </p>
 
 
+With hashing, there is always a small probability that similar items may fall in different buckets. This probability can be reduced by doing multiple rounds of
+hashing with nrounds = n<sub>h</sub> in parallel. For each output position(word) *i*, multiple vectors(z<sub>i</sub><sup>1</sup>,z<sub>i</sub><sup>2</sup>,z<sub>i</sub><sup>3</sup>,...z<sub>i</sub><sup>n<sub>h</sub></sup>) are computed and finally combined in to one.
+
+
+
 
