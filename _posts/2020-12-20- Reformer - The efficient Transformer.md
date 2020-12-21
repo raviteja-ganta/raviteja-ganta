@@ -83,3 +83,11 @@ So for any query q<sub>i</sub> ∈ Q = [q<sub>1</sub>,q<sub>2</sub>,....,q<sub>n
 But as mentioned above in LSH attention Q and K are identical. So it would suffice if we can find query vectors that are closest to each query vector q<sub>i</sub>. What [Locality sensitive hashing](https://arxiv.org/pdf/1509.02897.pdff) does is it clusters query vectors in to buckets, such that all query vectors that belong to the same bucket have high similarity(so higher dot product and higher softmax output). And LSH attention approximates attention by taking dot product between qeuries which are in same bucket. This greatly reduces computation as now for a given query vector q<sub>i</sub> we just compute dot product with subset of all other query vectors in [q<sub>1</sub>,q<sub>2</sub>,....,q<sub>n</sub>].
 
 
+Lets understand this with simple example.
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Reformers/rf_4.png" />
+</p>
+
+
