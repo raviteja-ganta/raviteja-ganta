@@ -111,3 +111,4 @@ As a side note, in standard transformer a query(q<sub>i</sub>) is allowed to att
 ### Reversible residual networks
 
 
+
