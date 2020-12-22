@@ -133,7 +133,7 @@ The key idea is that we start 2 copies of inputs, then at each layer we only upd
 </p>
 
 
-Layer Normalization is moved inside the residual blocks in above figure. So if we have outputs Y<sub>1</sub> and Y<sub>2</sub> then we can easily recalculate X<sub>1</sub> and X<sub>2</sub> during backpropagation using equations in above figure with out having to store X<sub>1</sub> and X<sub>2</sub> in memory. Just assume if Y<sub>1</sub> and Y<sub>2</sub> are generated outputs after 6<sup>th</sup> layer in reformer and stored in memory then we can recalculate on fly all the intermediate outputs from all the layers with out having to store them in memory.
+Layer Normalization is moved inside the residual blocks in above figure. So if we have outputs Y<sub>1</sub> and Y<sub>2</sub> then we can easily recalculate X<sub>1</sub> and X<sub>2</sub> during backpropagation using equations in above figure with out having to store X<sub>1</sub> and X<sub>2</sub> in memory((a) above). Just assume if Y<sub>1</sub> and Y<sub>2</sub> are generated outputs after 6<sup>th</sup> layer in reformer and stored in memory then we can recalculate on fly all the intermediate outputs from all the layers with out having to store them in memory((b) above)
 
 Since the reversible Transformer does not need to store activations in each layer we get rid of the *n<sub>l</sub>* term in *b*.*l*.*d<sub>model</sub>*.*n<sub>l</sub>*. So the 
 memory use of the whole model with *n<sub>l</sub>* layers is *b*.*l*.*d<sub>model</sub>*.
