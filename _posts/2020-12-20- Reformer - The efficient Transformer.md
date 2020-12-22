@@ -7,7 +7,7 @@ featured_image: assets/images/Transformers/tf_2.jpg
 ---
 
 
-*Knowledge about transformer architecture is necessary to understand this article. For those who are new to transformer architecture have a look at [Transformers](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers).
+*Knowledge about transformer architecture is necessary to understand this article. For those who are new to transformer architecture have a look at [Transformers](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers).*
 
 
 ### Transformer Complexity:
@@ -110,10 +110,21 @@ As a side note, in standard transformer a query(q<sub>i</sub>) is allowed to att
 ### Reversible residual networks
 
 
-The [transformer](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers) network procedes by repeatedly adding activations to a layer in the forward pass i.e., network store activations from each layer of forward pass so that they can be used during backpropagation. Activations for each layer are of size *b*.*l*.*d<sub>model</sub>*, so the the memory use of the whole model with *n<sub>l</sub>* layers is atleast *b*.*l*.*d<sub>model</sub>*.*n<sub>l</sub>*. If we are processing longer sequences with lot of layers in the architecture then we cannot fit all these activations in a single GPU. This is the fundamental efficiency challenge.
+The [transformer](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers) network procedes by repeatedly adding activations to a layer in the forward pass i.e., network store activations from each layer of forward pass so that they can be used during backpropagation. Activations for each layer are of size *b*.*l*.*d<sub>model</sub>*, so the the memory use of the whole model with *n<sub>l</sub>* layers is atleast *b*.*l*.*d<sub>model</sub>*.*n<sub>l</sub>*. If we are processing longer sequences with lot of layers in the architecture then we cannot fit all these activations in a single GPU. This is the fundamental efficiency challenge. Lets understand this with example below.
 
 
-Do we really need to store all these intermediate activations in memory for backward pass? Can we recalculate these activations on fly during backward pass? If we can do this we could save lot of memory and the fundamental challenge would be solved. Authors of reformer paper solved the problem by using [Reversible residual networks](https://papers.nips.cc/paper/2017/file/f9be311e65d81a9ad8150a60844bb94c-Paper.pdf) in the architecture. Lets understand these in detail.
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Reformers/rf_6.png" />
+</p>
+
+
+From above figure, for example during backward pass to calculate gradient of **S** we need to have access to output Z, input X and gradient of Z. So values of Z and X have to be saved somewhere to successfully perform backward propagation. Same problem would occur with calculating other gradients too. So we need to store activations like these for each and every layer and as length of input sequence increases then we cannot fit all these activations in a single GPU.
+
+
+Do we really need to store all these intermediate activations in memory for backward pass? Can we recalculate these activations on fly during backward pass? If we can do this we could save lot of memory and the fundamental challenge would be solved. Authors of reformer paper solved the problem by using [Reversible residual networks](https://papers.nips.cc/paper/2017/file/f9be311e65d81a9ad8150a60844bb94c-Paper.pdf) in the architecture. Lets understand these in detail with just one layer but logic would be same even for multiple layers.
+
+
+The key idea is that we start 2 copies of inputs, then at each layer we only update one of them. The activations we do not update will be the ones used to compute the residuals. With this configuration we can now run the network in reverse
 
 
 
