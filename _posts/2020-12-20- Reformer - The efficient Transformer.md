@@ -121,10 +121,24 @@ The [transformer](https://raviteja-ganta.github.io/attention-is-all-you-need-tra
 From above figure, for example during backward pass to calculate gradient of **S** we need to have access to output Z, input X and gradient of Z. So values of Z and X have to be saved somewhere to successfully perform backward propagation. Same problem would occur with calculating other gradients too. So we need to store activations like these for each and every layer and as length of input sequence increases then we cannot fit all these activations in a single GPU.
 
 
-Do we really need to store all these intermediate activations in memory for backward pass? Can we recalculate these activations on fly during backward pass? If we can do this we could save lot of memory and the fundamental challenge would be solved. Authors of reformer paper solved the problem by using [Reversible residual networks](https://papers.nips.cc/paper/2017/file/f9be311e65d81a9ad8150a60844bb94c-Paper.pdf) in the architecture. Lets understand these in detail with just one layer but logic would be same even for multiple layers.
+Do we really need to store all these intermediate activations in memory for backward pass? Can we recalculate these activations on fly during backward pass? If we can do this we could save lot of memory and the fundamental challenge would be solved. Authors of reformer paper solved the problem by using [Reversible residual networks](https://papers.nips.cc/paper/2017/file/f9be311e65d81a9ad8150a60844bb94c-Paper.pdf) in the architecture. The main idea is to allow the activations at
+any given layer to be recovered from the activations at the following layer, using only the model parameters. Lets understand these in detail with just one layer but logic would be same even for multiple layers.
 
 
-The key idea is that we start 2 copies of inputs, then at each layer we only update one of them. The activations we do not update will be the ones used to compute the residuals. With this configuration we can now run the network in reverse
+The key idea is that we start 2 copies of inputs, then at each layer we only update one of them. The activations we do not update will be the ones used to compute the residuals. With this configuration we can now run the network in reverse. The authors of Reformer observe in some initial experiments that the performance of a reversible transformer model matches the performance of a standard transformer model. Lets understand how this new architecture solves our memory problem.
 
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Reformers/rf_7.png" />
+</p>
+
+
+Layer Normalization is moved inside the residual blocks in above figure. So if we have outputs Y<sub>1</sub> and Y<sub>2</sub> then we can easily recalculate X<sub>1</sub> and X<sub>2</sub> during backpropagation using equations in above figure with out having to store X<sub>1</sub> and X<sub>2</sub> in memory. Just assume if Y<sub>1</sub> and Y<sub>2</sub> are generated outputs after 6<sup>th</sup> layer in reformer and stored in memory then we can recalculate on fly all the intermediate outputs from all the layers with out having to store them in memory.
+
+Since the reversible Transformer does not need to store activations in each layer we get rid of the *n<sub>l</sub>* term in *b*.*l*.*d<sub>model</sub>*.*n<sub>l</sub>*. So the 
+memory use of the whole model with *n<sub>l</sub>* layers is *b*.*l*.*d<sub>model</sub>*.
+
+
+### Chunked feed forward layers
 
 
