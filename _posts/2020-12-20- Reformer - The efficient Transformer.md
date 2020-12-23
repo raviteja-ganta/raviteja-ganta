@@ -105,12 +105,21 @@ We have to keep in mind that all above calculations is just for one head of atte
 
 As a side note, in standard transformer a query(q<sub>i</sub>) is allowed to attend to itself. But in reformer this is not allowed as the dot product of query q<sub>i</sub> with itself will almost always be greater than the dot product of a query vector with a vector at another position.
 
+We solved memory problem caused by attention part of transformer using LSH attention but we have one more problem caused by requirement to store activations in all layers for backprop.
+
+Memory use of the whole model for storing activations with *n<sub>l</sub>* layers is at least *b*.*l*.*d<sub>model</sub>*.*n<sub>l</sub>*. Even worse: inside the feed-forward layers of Transformer this goes up to *b*.*l*.*d<sub>ff</sub>*.*n<sub>l</sub>* where *d<sub>ff</sub>* >> *d<sub>model</sub>*. Here b = batch size, l = length of sequence, d<sub>model</sub> = Embedding dimension and d<sub>ff</sub> = Size of FFNN
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Reformers/rf_8.png" />
+</p>
+
 
 
 ### Reversible residual networks
 
 
-The [transformer](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers) network procedes by repeatedly adding activations to a layer in the forward pass i.e., network store activations from each layer of forward pass so that they can be used during backpropagation. Activations for each layer are of size *b*.*l*.*d<sub>model</sub>*, so the the memory use of the whole model with *n<sub>l</sub>* layers is atleast *b*.*l*.*d<sub>model</sub>*.*n<sub>l</sub>*. If we are processing longer sequences with lot of layers in the architecture then we cannot fit all these activations in a single GPU. This is the fundamental efficiency challenge. Lets understand this with example below.
+The [transformer](https://raviteja-ganta.github.io/attention-is-all-you-need-transformers) network procedes by repeatedly adding activations to a layer in the forward pass i.e., network store activations from each layer of forward pass so that they can be used during backpropagation. Activations for each layer are of size *b*.*l*.*d<sub>model</sub>*, so the memory use of the whole model with *n<sub>l</sub>* layers is atleast *b*.*l*.*d<sub>model</sub>*.*n<sub>l</sub>*. If we are processing longer sequences with lot of layers in the architecture then we cannot fit all these activations in a single GPU. This is the fundamental efficiency challenge. Lets understand this with example below.
 
 
 <p align="center">
@@ -125,7 +134,7 @@ Do we really need to store all these intermediate activations in memory for back
 any given layer to be recovered from the activations at the following layer, using only the model parameters. Lets understand these in detail with just one layer but logic would be same even for multiple layers.
 
 
-The key idea is that we start 2 copies of inputs, then at each layer we only update one of them. The activations we do not update will be the ones used to compute the residuals. With this configuration we can now run the network in reverse. The authors of Reformer observe in some initial experiments that the performance of a reversible transformer model matches the performance of a standard transformer model. Lets understand how this new architecture solves our memory problem.
+The key idea is that we start 2 copies of inputs, then at each layer we only update one of them. The activations we do not update will be the ones used to compute the residuals. With this configuration we can now run the network in reverse. Lets understand how this new architecture solves our memory problem.
 
 
 <p align="center">
@@ -135,10 +144,39 @@ The key idea is that we start 2 copies of inputs, then at each layer we only upd
 
 Layer Normalization is moved inside the residual blocks in above figure. So if we have outputs Y<sub>1</sub> and Y<sub>2</sub> then we can easily recalculate X<sub>1</sub> and X<sub>2</sub> during backpropagation using equations in above figure with out having to store X<sub>1</sub> and X<sub>2</sub> in memory((a) above). Just assume if Y<sub>1</sub> and Y<sub>2</sub> are generated outputs after 6<sup>th</sup> layer in reformer and stored in memory then we can recalculate on fly all the intermediate outputs from all the layers with out having to store them in memory((b) above)
 
-Since the reversible Transformer does not need to store activations in each layer we get rid of the *n<sub>l</sub>* term in *b*.*l*.*d<sub>model</sub>*.*n<sub>l</sub>*. So the 
-memory use of the whole model with *n<sub>l</sub>* layers is *b*.*l*.*d<sub>model</sub>*.
+Since the reversible Transformer does not need to store activations in each layer we get rid of the *n<sub>l</sub>* term in *b*.*l*.*d<sub>model</sub>*.*n<sub>l</sub>* we have seen above. So the memory use of the whole model with *n<sub>l</sub>* layers is *b*.*l*.*d<sub>model</sub>*.
 
 
 ### Chunked feed forward layers
+
+But we still have problem of larger dimensions in feed forward layers d<sub>ff</sub>. Usually this dimension is set to 4K. To give a background, in transformers architecture attention layer is followed by 2 feed forward layers. From figure 4 matrix Z<sub>'</sub> is input to FFNN. Entire forward pass through FFNN is shown below.
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Reformers/rf_9.png" />
+</p>
+
+
+It is important to understand that feed forward layers process sequences independent of tokens and in parallel which means output y<sub>1</sub><sup>out</sup> depends only on z<sub>1</sub><sup>'</sup>, y<sub>2</sub><sup>out</sup> depends only on z<sub>2</sub><sup>'</sup> and so on.
+
+
+From above figure we can see output dimensions of FFNN<sub>int</sub> is d<sub>ff</sub> = 9 for illustration but usually its set to large number(4000) and output of FFNN<sub>out</sub> is d<sub>model</sub> = 4(usually this dimension is same as input to FFNN). Authors observed that d<sub>ff</sub> usually tends to be much larger than d<sub>model</sub>. This means that tensor Y<sub>int</sub> of dimension d<sub>ff</sub> X *n* allocates a significant amount of the total memory and can even become the memory bottleneck. Do we really need to compute and save Y<sub>int</sub> when Y<sub>out</sub> is what we need? We somehow need to overcome this problem and the answer is **Chunked feed forward layers**
+
+
+#### Intutition
+
+Instead of processing entire sequence through FFNN to generate Y<sub>int</sub> and then Y<sub>out</sub> we only process one chunk at a time through 2 layers of FFNN and finally all chunks are concatenated to generate Y<sub>out</sub>. This method solves memory problem but takes longer time to process.Lets understand this with example.
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Reformers/rf_10.png" />
+</p>
+
+
+In above fig, input is processed with chunks of size 4. So instead of storing entire Y<sup>int</sup> of size 16 X d<sub>ff</sub> in memory during forward pass, now with chunked feed forward layers we store just tensor of size 4 X d<sub>ff</sub> (in general chunk_size X d<sub>ff</sub>) in memory at a time and finally results are concatenated.
+
+
+
+
 
 
