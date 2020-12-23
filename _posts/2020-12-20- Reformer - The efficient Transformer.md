@@ -177,6 +177,8 @@ In above fig, input is processed with chunks of size 4. So instead of storing en
 
 
 
+### Conclusion
 
+Reformer takes the soul of transformer and each part of it is re-engineered very efficiently using LSH attention, Reversible residual networks and Chunked feed forward layers so that it can exectued efficiently on long sequences and with small memory use even for models with a large number of layers.
 
 
