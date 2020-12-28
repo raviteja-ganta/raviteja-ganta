@@ -38,6 +38,11 @@ As we have seen above in example, even though our training data for language mod
 </p>
 
 
+### How word embeddings look:
+
+Word embeddings are continuous, vector space representations of words. Word embedding vectors usually have dimensions around 300(in general embed_size). So each word in vocablury are represented by a vector of size 300. But what does each value of this vector of embed_size represent? We can think of them as representing certain characteristics like age, food, gender, size, royal etc. Let's go through an example to understand this in detail. Even though below example shows that embeddings are represented by characterstics like age, food, gender etc., embeddings which we learn wont have an easy interpretation like component one is *age*, component two is *food* etc., Important point to understand is that embeddings learn certiain characteristics which will be very similar for similar words and different for dissimilar words.
+
+
 
 
 
