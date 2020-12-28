@@ -40,7 +40,54 @@ As we have seen above in example, even though our training data for language mod
 
 ### How word embeddings look:
 
-Word embeddings are continuous, vector space representations of words. Word embedding vectors usually have dimensions around 300(in general embed_size). So each word in vocablury are represented by a vector of size 300. But what does each value of this vector of embed_size represent? We can think of them as representing certain characteristics like age, food, gender, size, royal etc. Let's go through an example to understand this in detail. Even though below example shows that embeddings are represented by characterstics like age, food, gender etc., embeddings which we learn wont have an easy interpretation like component one is *age*, component two is *food* etc., Important point to understand is that embeddings learn certiain characteristics which will be very similar for similar words and different for dissimilar words.
+Word embeddings are continuous, vector space representations of words. Word embedding vectors usually have dimensions around 300(in general embed_size). So each word in vocablury are represented by a vector of size 300. But what does each value of this vector of embed_size represent? We can think of them as representing certain characteristics like age, food, gender, size, royal etc. Let's go through an example to understand this in detail. Even though below example shows that embeddings are represented by characterstics like age, food, gender etc., embeddings which we learn wont have an easy interpretation like component one is *age*, component two is *food* etc., Important point to understand is that embeddings learn certain characteristics which will be very similar for similar words and different for dissimilar words.
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/word embeddings/we_3.png" />
+</p>
+
+
+If we look at word embeddings of words *Apple* and *orange*, they look almost identical. So dot product of these two vectors would be high.
+
+Now that we have decent understanding of word embeddings, let's see how we can produce these vectors of embed_size size for every word in vocablary.
+
+
+### Generating Word Embeddings:
+
+Below are architectures we will go through
+
+* Word2Vec Skip-Gram model
+
+* Word2Vec Skip-Gram model with negative sampling
+
+
+
+### Word2Vec Skip-Gram model
+
+
+Main idea behind Word2Vec Skip-Gram model is that *words that show up in similar context will have similar representation*. Context = Words that are likely to appear around them.
+
+Lets understand this with an example:
+
+1) I play cricket every alternate day
+
+2) Children are playing football across the street
+
+3) Doctor advised me to play tennis every morning.
+
+
+Above, if we see words *cricket*, *football* and *tennis* all have word *play* surrounding them(similar context). So these 3 words will have similar word embedding vectors which is justifiable as these 3 words are names of sport.
+
+
+For any word, we can think of context as surrounding words. So our task is to predict a randomly selected surrounding word from the word of interest. Lets understand this with an example *Children are playing football across the street*. Let's pick our word of interest as word *football* and *playing* as the surrounding word. So we give word *football* to our neural network(which we are going to train and build) and this neural network should predict with high probability the word *playing*. But context can include surrounding words that come before and also after and not just one word. So authors of [paper](https://arxiv.org/pdf/1301.3781.pdf) used window size to select surrounding context words as shown below.
+
+
+
+
+
+
+
 
 
 
