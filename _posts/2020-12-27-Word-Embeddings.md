@@ -28,6 +28,14 @@ Let's say we have a trained language model and one of the traning examples is *I
 So, we want semantically similar words to be mapped to nearby points, thus making the representation carry useful information about the word actual meaning. We call this new representation as **Word Embeddings**.
 
 
+### Word Embeddings helps transfer learning:
+
+As we have seen above in example, even though our training data for language modelling does not have word *apple*, if representation for *apple* is similar to word *orange* (both are fruits so we expect most of characteristics of them are same, so similar representation) then our language model is more probable to predict next word as *juice* in sentence *I want a glass of apple*.
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/word embeddings/we_2.png" />
+</p>
 
 
 
