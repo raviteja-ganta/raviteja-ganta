@@ -83,11 +83,40 @@ Above, if we see words *cricket*, *football* and *tennis* all have word *play* s
 For any word, we can think of context as surrounding words. So our task is to predict a randomly selected surrounding word from the word of interest. Lets understand this with an example *Children are playing football across the street*. Let's pick our word of interest as word *football* and *playing* as the surrounding word. So we give word *football* to our neural network(which we are going to train and build) and this neural network should predict with high probability the word *playing*. But context can include surrounding words that come before and also after and not just one word. So authors of [paper](https://arxiv.org/pdf/1301.3781.pdf) used window size to select surrounding context words as shown below.
 
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/word embeddings/we_4.png" />
+</p>
 
 
+#### Model architecture:
+
+Below is the model architecture we will be using
 
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/word embeddings/we_5.png" />
+</p>
 
+
+Each training input as show in fig 3 will be first represented as one hot vectors that go in to model as shown in fig 4. Then we have embedding layer with number of neurons = embed_size(usually this is set to 300) and output layer will be 10,000 neuron softmax(here vocablary size = 10,000) that outputs probability of each word in vocablary.
+
+
+For example, when word *football* is sent as input to trained Word2Vec model above, then final layer will output high probabilities for the words *are*, *playing*, *across*, *the* as these are output words for input *football* in training set.
+
+
+#### Hidden layer
+
+Hidden layer is where all the magic happens. Coefficients of this hidden layer are the actual word embeddings.
+
+For example, let's say we are learning word embeddings of dimension 300 for every word. Then coefficients or weight matrix of hidden embedding layer will be of size 10000(vocab_size) X 300(embed_size). Output of hidden layer will be of size 300(embed_size) X 1. This output will pass through output layer with softmax to generate 10000 values.
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/word embeddings/we_6.png" />
+</p>
+
+
+Instead of matrix multiplication as shown above, we can directly use embedding weight matrix as look up table. Each row in embedding weight matrix gives embedding vector for a word(result would be same) in the vocabulary.
 
 
 
