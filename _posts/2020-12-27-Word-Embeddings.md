@@ -104,6 +104,8 @@ Each training input as show in fig 3 will be first represented as one hot vector
 For example, when word *football* is sent as input to trained Word2Vec model above, then final layer will output high probabilities for the words *are*, *playing*, *across*, *the* as these are output words for input *football* in training set.
 
 
+Model is trained like any other neural network where we update coefficients using backpropagation and loss function.
+
 #### Hidden layer
 
 Hidden layer is where all the magic happens. Coefficients of this hidden layer are the actual word embeddings.
@@ -117,6 +119,10 @@ For example, let's say we are learning word embeddings of dimension 300 for ever
 
 
 Instead of matrix multiplication as shown above, we can directly use embedding weight matrix as look up table. Each row in embedding weight matrix gives embedding vector for a word(result would be same) in the vocabulary.
+
+
+#### Intuition
+
 
 
 
