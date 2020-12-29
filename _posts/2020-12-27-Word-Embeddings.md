@@ -124,6 +124,13 @@ Instead of matrix multiplication as shown above, we can directly use embedding w
 #### Intuition
 
 
+As we have seen above, main idea behind Word2Vec Skip-Gram model is that
+
+> Words that show up in similar context will have similar representation
+
+So if two words have similar context(i.e., same words surrounding them) then our model needs to output similar output for these 2 words. For example, in our 3 sentences, words *cricket*, *football*, *tennis* have similar context as word *playing* is the surrounding word. Generally speaking if we take large text corpora there is very high chance that these 3 words(cricket, football, tennis) will have *playing* as surrounding word. So our model has to output *playing* as output with higher probability for these 3 words. This can only happen if embedding vectors for these 3 words are similar because embedding vectors are the one that go in to output softmax layer as shown in Fig 4
+
+
 
 
 
