@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Word Embeddings"
+title:  "Word Embeddings and Word2Vec"
 tags: [ Tips, Natural Language Processing, Neural Networks  ]
 featured_image_thumbnail: assets/images/Transformers/tf_1_thumbnail.jpg
 featured_image: assets/images/Transformers/tf_2.jpg
@@ -57,11 +57,9 @@ Now that we have decent understanding of word embeddings, let's see how we can p
 
 ### Generating Word Embeddings:
 
-Below are architectures we will go through
+Below is the architecture we will go through
 
 * Word2Vec Skip-Gram model
-
-* Word2Vec Skip-Gram model with negative sampling
 
 
 
