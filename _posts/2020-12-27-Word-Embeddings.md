@@ -6,6 +6,8 @@ featured_image_thumbnail: assets/images/Transformers/tf_1_thumbnail.jpg
 featured_image: assets/images/Transformers/tf_2.jpg
 ---
 
+This article is in development.
+
 
 Its obvious that any deep learning model needs to have some sort of numeric input to work with. In computer vision its not a problem as we have pixel values as inputs but in
 Natural language processing we have text which is not a numeric input. One common way to convert text to numbers is to use one hot representation. For example, let's say we have
