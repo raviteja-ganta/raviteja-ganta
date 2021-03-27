@@ -47,7 +47,7 @@ So the activation at any neuron in layer l can be written as
 *a<sub>j</sub><sup>[l]</sup>* = *f*(\Sigma
 
 
-
+\sum_{n=1}^{10}
 
 
 
