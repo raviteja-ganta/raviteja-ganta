@@ -16,12 +16,36 @@ for efficient learning. This post gives in depth explanation of gradient descent
 Below are the contents:
 
 1) Notation to represent neural network
-2)
+2) Forward propagation
 
 
 
 1) Notation to represent a neural network:
 
-I will be using a 2 layer neural network through out this post as our running example.
+I will be using a 2 layer neural network as shown below through out this post as our running example.
 
-*w<sub>jk</sub><sup>[l]</sup>*
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Backprop/bp_1.png" />
+</p>
+
+*w<sub>jk</sub><sup>[l]</sup>* - Weight for connection from k<sup>th</sup> neuron in layer (l-1) to j<sup>th</sup> neuron in layer l
+*b<sub>j</sub><sup>[l]</sup>* - Bias of j<sup>th</sup> neuron in layer l
+*a<sub>j</sub><sup>[l]</sup>* - Activation of j<sup>th</sup> neuron in layer l
+
+2) Forward propagation:
+
+Below is the calculation that happens as part of forward propagation in single neuron
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Backprop/bp_2.png" />
+</p>
+
+So the activation at any neuron in layer l can be written as 
+
+*a<sub>j</sub><sup>[l]</sup>* = *f*($\sigma$
+
+
+
+
+
+
