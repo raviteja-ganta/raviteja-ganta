@@ -29,7 +29,9 @@ I will be using a 2 layer neural network as shown below through out this post as
 </p>
 
 *w<sub>jk</sub><sup>[l]</sup>* - Weight for connection from k<sup>th</sup> neuron in layer (l-1) to j<sup>th</sup> neuron in layer l
+
 *b<sub>j</sub><sup>[l]</sup>* - Bias of j<sup>th</sup> neuron in layer l
+
 *a<sub>j</sub><sup>[l]</sup>* - Activation of j<sup>th</sup> neuron in layer l
 
 2) Forward propagation:
@@ -42,7 +44,7 @@ Below is the calculation that happens as part of forward propagation in single n
 
 So the activation at any neuron in layer l can be written as 
 
-*a<sub>j</sub><sup>[l]</sup>* = *f*($\sigma$
+*a<sub>j</sub><sup>[l]</sup>* = *f*(\sum_{i=1}^n a_i
 
 
 
