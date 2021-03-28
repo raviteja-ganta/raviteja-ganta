@@ -25,7 +25,7 @@ Below are the contents:
 I will be using a 2 layer neural network as shown below through out this post as our running example.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Backprop/bp_1.png" />
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Backprop/bp1.png" />
 </p>
 
 *w<sub>jk</sub><sup>[l]</sup>* - Weight for connection from k<sup>th</sup> neuron in layer (l-1) to j<sup>th</sup> neuron in layer l
@@ -39,7 +39,7 @@ I will be using a 2 layer neural network as shown below through out this post as
 Below is the calculation that happens as part of forward propagation in single neuron
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Backprop/bp_2.png" />
+  <img src="https://raw.githubusercontent.com/raviteja-ganta/raviteja-ganta.github.io/main/assets/images/Backprop/bp2.png" />
 </p>
 
 So the activation at any neuron in layer l can be written as 
