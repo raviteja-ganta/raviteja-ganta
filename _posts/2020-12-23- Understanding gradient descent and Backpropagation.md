@@ -46,6 +46,6 @@ So the activation at any neuron in layer l can be written as
 
 *a<sub>j</sub><sup>[l]</sup>* = *f*(<img src="https://render.githubusercontent.com/render/math?math=\huge\Sigma"> 
 
-<img src="https://render.githubusercontent.com/render/math?math=\begin{equation}\displaystyle \sum_{k}\{equation}">
+<img src="https://render.githubusercontent.com/render/math?math=\begin{equation}\displaystyle \sum_{k}\end{equation}">
 
 
