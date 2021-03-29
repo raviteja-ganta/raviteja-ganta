@@ -44,9 +44,8 @@ Below is the calculation that happens as part of forward propagation in single n
 
 So the activation at any neuron in layer l can be written as 
 
-*a<sub>j</sub><sup>[l]</sup>* = *f*(
+*a<sub>j</sub><sup>[l]</sup>* = *f*(<img src="https://render.githubusercontent.com/render/math?math=\huge\Sigma"> 
 
-<img src="https://render.githubusercontent.com/render/math?math=e^{i \pi} = -1">
-<img src="https://render.githubusercontent.com/render/math?math=\huge\Sigma">
+<img src="https://render.githubusercontent.com/render/math?math=\begin{equation}\\displaystyle \sum_{n=0}^\infty\frac{1}{2^n}\end{equation}">
 
 
