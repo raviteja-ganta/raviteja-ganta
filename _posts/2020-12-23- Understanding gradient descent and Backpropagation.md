@@ -50,4 +50,4 @@ a_j^[l] = <img src="https://render.githubusercontent.com/render/math?math=\LARGE
 
 <img src="https://render.githubusercontent.com/render/math?math=\LARGE a_j^[l]"
 
-a_j^[l]
+x_i^2
