@@ -48,6 +48,6 @@ So the activation at any neuron in layer l can be written as
 
 <img src="https://render.githubusercontent.com/render/math?math=\LARGE a_j^l"> = <img src="https://render.githubusercontent.com/render/math?math=\LARGE f"><img src="https://render.githubusercontent.com/render/math?math=\LARGE ("><img src="https://render.githubusercontent.com/render/math?math=\displaystyle \sum_{k}"> 
 
-<img src="https://render.githubusercontent.com/render/math?math=\LARGE x_i^2">
+<img src="https://render.githubusercontent.com/render/math?math=\LARGE x_i^[2]">
 
 
