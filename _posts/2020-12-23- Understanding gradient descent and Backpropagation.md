@@ -66,4 +66,5 @@ Main goal of backpropagation is to understand how varying individiual weights of
 
 where <img src="https://render.githubusercontent.com/render/math?math=\LARGE y^i"> is the actual label or truth of data point *i* and yhat is the prediction from neural network.
 
+$$ x = y^2 $$
 
