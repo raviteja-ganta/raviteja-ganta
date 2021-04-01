@@ -4,8 +4,7 @@
     <title>{% if page.title %}{{ page.title }} – {% endif %}{{ site.name }} – {{ site.description }}</title>
 
     {% include meta.html %}
-    {% include mathjax.html %}
-
+    
     <!--[if lt IE 9]>
       <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -34,6 +33,9 @@
         </header>
       </div>
     </div>
+
+<script src=”https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id=”MathJax-script” async src=”https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <div id="main" role="main" class="container">
       {{ content }}
